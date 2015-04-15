@@ -49,6 +49,7 @@ public class HostelsController extends HttpServlet {
 	public static Map<String, Object> stop;;
 	
 	public void init() {
+		// Populate stop words
 		stop = new HashMap<String, Object>();
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(new File(getServletContext().getRealPath("/" + STOP_FILE))));
@@ -61,6 +62,7 @@ public class HostelsController extends HttpServlet {
 		}
 	}
 	
+	// Generic get
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String[] uris = request.getRequestURI().split("/");
 		
@@ -78,6 +80,7 @@ public class HostelsController extends HttpServlet {
 		}
 	}
 	
+	// Classifier
 	private void classify(HttpServletRequest request, HttpServletResponse response, String[] uris) throws ServletException, IOException {
 		List<Hostel> results = new ArrayList<Hostel>();
 		int searchId = -1;
@@ -107,12 +110,14 @@ public class HostelsController extends HttpServlet {
 				
 				HostelClassifier classifier = new HostelClassifier();
 				
+				// Classify by hostel
 				if(hostelsDatabase.isAHostel(possibleHostel) == 1) {
 					Hostel hostel = hostelsDatabase.loadHostel(possibleHostel);
 					results = classifier.classify(model, hostel, stop);
 					
 					searchId = searchesDatabase.saveHostelSearch(request.getSession().getId(), hostel.getName(), city, adwords);
 				}
+				// Classify by tags
 				else {
 					List<String> possibleTags = Arrays.asList(parameters.split("[ ,]"));
 					results = classifier.classifyByTags(model, possibleTags, stop);
@@ -134,12 +139,12 @@ public class HostelsController extends HttpServlet {
 	    out.println("<h1>" + request.getParameter(adWordsParameter) + "</h1>");*/
 	}
 	
+	// Autocomplete hints
 	private void returnHints(HttpServletResponse response, String[] uris) throws ServletException, IOException {
-		
-		
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		
+		// Hostel hints
 		if(uris[hintsClassUri].equals(hintsClassHostelWord)) {
 			HostelsDatabase hostelsDatabase = new HostelsDatabase();
 			
@@ -165,6 +170,7 @@ public class HostelsController extends HttpServlet {
 			
 			hostelsDatabase.close();
 		}
+		// Tag hints
 		else if(uris[hintsClassUri].equals(hintsClassLocationWord)) {
 			LocationsDatabase locationsDatabase = new LocationsDatabase();
 			
@@ -184,6 +190,7 @@ public class HostelsController extends HttpServlet {
 		}
 	}
 	
+	// Search by city (no hostel or tags)
 	private void displayAll(HttpServletRequest request, HttpServletResponse response, String[] uris) throws ServletException, IOException {
 		List<Hostel> results = new ArrayList<Hostel>();
 		int searchId = -1;

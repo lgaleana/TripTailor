@@ -15,6 +15,7 @@ public class HostelClassifier {
 	private final double WEIGHT_BASE = 1.5;
 	private final int QUEUE_SIZE = 6;
 	
+	// Classify by hostel
 	public List<Hostel> classify(List<Hostel> model, Hostel hostel, Map<String, Object> stop) {
 		int reviews = getHighestNoReviews(model);
 		int highestNoReviews = hostel.getNoReviews() < reviews ? hostel.getNoReviews() : reviews;
@@ -54,6 +55,7 @@ public class HostelClassifier {
 				rating += Math.pow(distance, 2);
 			}
 			
+			// Tags
 			int size = QUEUE_SIZE - sharedQueue.size();
 			PriorityQueue<TagHolder> queue = new PriorityQueue<TagHolder>(QUEUE_SIZE, new TagComparator());
 			for(Map.Entry<String, Double> modelHostelEntry : modelHostel.entrySet())
@@ -63,6 +65,7 @@ public class HostelClassifier {
 			for(TagHolder holder : sharedQueue)
 				addToQueue(queue, holder, QUEUE_SIZE);
 			
+			// Review penalizer
 			highestNoReviews++;
 			int modelReviews = modelEntry.getNoReviews() + 1;
 			int reviewDifference = highestNoReviews / modelReviews;
@@ -77,6 +80,7 @@ public class HostelClassifier {
 		return model;
 	}
 	
+	// Classify by tags
 	public List<Hostel> classifyByTags(List<Hostel> model, List<String> attributes, Map<String, Object> stop) {
 		int averageNoReviews = getAverageNoReviews(model);
 		
@@ -105,6 +109,7 @@ public class HostelClassifier {
 			
 			rating /= attributes.size();
 			
+			// Tags
 			int size = QUEUE_SIZE - sharedQueue.size();
 			PriorityQueue<TagHolder> queue = new PriorityQueue<TagHolder>(QUEUE_SIZE, new TagComparator());
 			for(Map.Entry<String, Double> modelHostelEntry : modelHostel.entrySet())
@@ -114,6 +119,7 @@ public class HostelClassifier {
 			for(TagHolder holder : sharedQueue)
 				addToQueue(queue, holder, QUEUE_SIZE);
 			
+			// Review penalizer
 			averageNoReviews++;
 			int modelReviews = modelEntry.getNoReviews() + 1;
 			int reviewDifference = averageNoReviews / modelReviews;
