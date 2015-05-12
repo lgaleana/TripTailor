@@ -37,7 +37,7 @@
 			<% for(i = 0; i < results.size(); i++) { %>
 			<% Hostel hostel = results.get(i); %>
 			<div <% if(i % 2 == 0) { %> class="hostel-entry left" <% } else { %> class="hostel-entry" <% } %>>
-			<a href=<%= hostel.getLink() %> target="_blank" onclick="saveHostelClick(<%= searchId %>, <%= hostel.getId() %>); return true;">
+			<a href=<%= hostel.getUrl() %> target="_blank" onclick="saveHostelClick(<%= searchId %>, <%= hostel.getId() %>); return true;">
 				<% String name = hostel.getName(); %>
 				<h1><%= name %></h1>
 

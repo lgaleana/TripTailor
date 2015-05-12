@@ -20,7 +20,7 @@ public class HostelClassifier {
 		int reviews = getHighestNoReviews(model);
 		int highestNoReviews = hostel.getNoReviews() < reviews ? hostel.getNoReviews() : reviews;
 		
-		model.add(new Hostel(hostel.getId(), hostel.getName(), hostel.getNoReviews(), hostel.getPrice(), hostel.getLink(),
+		model.add(new Hostel(hostel.getId(), hostel.getName(), hostel.getNoReviews(), hostel.getPrice(), hostel.getUrl(),
 				new HashMap<String, Double>(hostel.getAttributes())));
 		
 		for(Hostel modelEntry : model) {

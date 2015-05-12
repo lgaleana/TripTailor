@@ -12,7 +12,7 @@ public class Hostel {
 	private String description;
 	private float price;
 	private String image;
-	private String link;
+	private String url;
 	private String city;
 	private String country;
 	private int noReviews;
@@ -21,12 +21,12 @@ public class Hostel {
 	private double rating;
 	private PriorityQueue<TagHolder> tags;
 	
-	public Hostel(long id, String name, int noReviews, float price, String link, Map<String, Double> attributes) {
+	public Hostel(long id, String name, int noReviews, float price, String url, Map<String, Double> attributes) {
 		this.id = id;
 		this.name = name;
 		this.noReviews = noReviews;
 		this.price = price;
-		this.link = link;
+		this.url = url;
 		this.attributes = attributes;
 	}
 	
@@ -60,11 +60,11 @@ public class Hostel {
 	public void setImage(String image) {
 		this.image = image;
 	}
-	public String getLink() {
-		return link;
+	public String getUrl() {
+		return url;
 	}
-	public void setLink(String link) {
-		this.link = link;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	public String getCity() {
 		return city;
