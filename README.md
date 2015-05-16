@@ -26,3 +26,11 @@
 
 ## Util
 **Util**: Utility class.
+
+
+http://triptailor.co/hostels/search/<city>
+http://triptailor.co/hostels/search/<city>/<hostel or tags>
+http://triptailor.co/hostels/hints/hostels/<query>
+http://triptailor.co/hostels/hints/locations/<query>
+http://triptailor.co/stats/hostel//stats/hostel-click
+http://triptailor.co/stats/hostel//stats

@@ -26,7 +26,7 @@ import com.triptailor.model.Location;
 @SuppressWarnings("serial")
 public class HostelsController extends HttpServlet {
 	
-	public static int LOCAL = 1;
+	public static int LOCAL = 0;
 	private String redirectUrl = "http://triptailor.co";
 	
 	private int cityUri = 3 + LOCAL;
