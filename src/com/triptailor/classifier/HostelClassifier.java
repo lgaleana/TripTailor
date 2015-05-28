@@ -18,7 +18,7 @@ public class HostelClassifier {
 	// Classify by hostel
 	public List<Hostel> classify(List<Hostel> model, Hostel hostel, Map<String, Object> stop) {
 		int reviews = getHighestNoReviews(model);
-		int highestNoReviews = hostel.getNoReviews() < reviews ? hostel.getNoReviews() : reviews;
+		int highestNoReviews = (hostel.getNoReviews() < reviews ? hostel.getNoReviews() : reviews) + 1;
 		
 		model.add(new Hostel(hostel.getId(), hostel.getName(), hostel.getNoReviews(), hostel.getPrice(), hostel.getUrl(),
 				new HashMap<String, Double>(hostel.getAttributes())));
@@ -66,7 +66,6 @@ public class HostelClassifier {
 				addToQueue(queue, holder, QUEUE_SIZE);
 			
 			// Review penalizer
-			highestNoReviews++;
 			int modelReviews = modelEntry.getNoReviews() + 1;
 			int reviewDifference = highestNoReviews / modelReviews;
 			rating = (rating * Math.pow(WEIGHT_BASE, reviewDifference)) / WEIGHT_BASE;
@@ -82,7 +81,7 @@ public class HostelClassifier {
 	
 	// Classify by tags
 	public List<Hostel> classifyByTags(List<Hostel> model, List<String> attributes, Map<String, Object> stop) {
-		int averageNoReviews = getAverageNoReviews(model);
+		int averageNoReviews = getAverageNoReviews(model) + 1;
 		
 		for(Hostel modelEntry : model) {
 			String[] names = modelEntry.getName().split(" ");
@@ -120,7 +119,6 @@ public class HostelClassifier {
 				addToQueue(queue, holder, QUEUE_SIZE);
 			
 			// Review penalizer
-			averageNoReviews++;
 			int modelReviews = modelEntry.getNoReviews() + 1;
 			int reviewDifference = averageNoReviews / modelReviews;
 			reviewDifference = reviewDifference < 1 ? 1 : reviewDifference;

@@ -83,12 +83,35 @@ public class HostelsDatabase extends DatabaseHelper {
 				Long hostelId = resultSet.getLong(1);
 
 				statement =
-				connect.prepareStatement("SELECT name, rating FROM hostel_attribute, attribute WHERE hostel_id = ? AND attribute_id = id");
+				connect.prepareStatement("SELECT name, freq, cfreq, rating FROM hostel_attribute, attribute WHERE hostel_id = ? AND "
+						+ "attribute_id = id");
 				statement.setLong(1, hostelId);
 				resultSet2 = statement.executeQuery();
 
-				while(resultSet2.next())
-					hostel.put(resultSet2.getString(1), resultSet2.getDouble(2));
+				ArrayList<String> names = new ArrayList<String>();
+				ArrayList<double[]> modifiers = new ArrayList<double[]>();
+				int n = 0;
+				while(resultSet2.next()) {
+					names.add(resultSet2.getString(1));
+					
+					double[] container = new double[3];
+					container[0] = resultSet2.getDouble(2);
+					container[1] = resultSet2.getDouble(3);
+					container[2] = resultSet2.getDouble(4);
+					modifiers.add(container);
+					
+					n += container[0];
+				}
+				
+				for(int i = 0; i < names.size(); i++) {
+					double freq = modifiers.get(i)[0];
+					double cfreq = modifiers.get(i)[1];
+					double rating = modifiers.get(i)[2];
+					
+					double crating = (cfreq / n) * (rating / freq);
+					
+					hostel.put(names.get(i), crating);
+				}
 				
 				return new Hostel(hostelId, resultSet.getString(2), resultSet.getInt(3),
 						Math.round(resultSet.getFloat(4) * 100) / ((float) 100), resultSet.getString(5),
