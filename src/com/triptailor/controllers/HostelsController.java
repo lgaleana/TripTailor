@@ -26,7 +26,7 @@ import com.triptailor.model.Location;
 @SuppressWarnings("serial")
 public class HostelsController extends HttpServlet {
 	
-	public static int LOCAL = 0;
+	public static int LOCAL = 1;
 	private String redirectUrl = "http://triptailor.co";
 	
 	private int cityUri = 3 + LOCAL;
@@ -44,6 +44,7 @@ public class HostelsController extends HttpServlet {
 	
 	private final String HOSTELS_WORD = "hostels";
 	private final String TAGS_WORD = "tags";
+	private final String CITIES_WORD = "tags";
 	
 	private final String STOP_FILE = "stop_tags.txt";
 	public static Map<String, Object> stop;;
@@ -134,9 +135,9 @@ public class HostelsController extends HttpServlet {
 		request.setAttribute("searchId", searchId);
 		request.getRequestDispatcher("/WEB-INF/hostels.jsp").forward(request, response);
 		
-		/*response.setContentType("text/html");
+		/* response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
-	    out.println("<h1>" + request.getParameter(adWordsParameter) + "</h1>");*/
+	    out.println("<h1>" + searchId + "</h1>"); */
 	}
 	
 	// Autocomplete hints
@@ -152,18 +153,12 @@ public class HostelsController extends HttpServlet {
 			List<String> hostelHints = hints.get(HOSTELS_WORD);
 			List<String> tagHints = hints.get(TAGS_WORD);
 			
-			String json = "{\"" + HOSTELS_WORD + "\":[";
-			for(String hint : hostelHints)
-				json += "\"" + hint + "\",";
-			if(hostelHints.size() > 0)
-				json = json.substring(0, json.length() - 1);
-			
-			json += "], \"" + TAGS_WORD + "\":[";
+			String json = "[";
 			for(String hint : tagHints)
 				json += "\"" + hint + "\",";
 			if(tagHints.size() > 0)
 				json = json.substring(0, json.length() - 1);
-			json += "]}";
+			json += "]";
 			
 			out.print(json);
 			out.flush();
