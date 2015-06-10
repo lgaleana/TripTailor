@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title>TripTailor Hostels</title>
+
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500' rel='stylesheet' type='text/css'>
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/general.css" rel="stylesheet">
+		<link href="css/hostels-new.css" rel="stylesheet">
+		<link rel="shortcut icon" type="images/x-icon" href="img/favicon.ico">
+
+	</head>
+	<body>
+		<!-- addthis -->
+		<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-520ea186234cadc3" async="async"></script>
+
+		<script type="text/jsx" src="js/components.js"></script>
+		<script type="text/jsx">
+
+			var JSONSEARCHURL = HOSTELSURL + "search-json/";
+			var HOSTELSTODISPLAY = 16;
+
+			var SearchHeader = React.createClass({
+				
+				render: function() {
+					return (
+						<div className="container-fluid header">
+							<AutoCompleteSearch {...this.props} />
+							<AlsoTry />
+						</div>
+					);
+				}
+			});
+
+			var Hostels = React.createClass({
+				getInitialState: function() {
+					return {location: getQueryValue("location").replace(/-/g, " "), query: '', tags: this.getArrayTags(getQueryValue("tags")), results: [], displayedResults: HOSTELSTODISPLAY};
+				},
+				componentWillMount: function() {
+					this.getResults(this.state.location.replace(/[\/%]/g,"").replace(", ", ",").replace(/-/g, "%21").replace(/ /g, "-"), this.getStringTags(this.state.tags));
+				},
+				displayMoreResults: function() {
+					this.setState({displayedResults: this.state.displayedResults + HOSTELSTODISPLAY});
+				},
+				updateLocationValue: function(value) {
+					this.setState({location: value});
+				},
+				updateQueryValue: function(value) {
+					this.setState({query: value});
+				},
+				addTag: function(value) {
+					var tags = this.state.tags.slice(0, this.state.tags.length);
+					tags.push(value);
+					this.setState({tags: tags});
+					this.getResults(this.state.location.replace(/[\/%]/g,"").replace(", ", ",").replace(/-/g, "%21").replace(/ /g, "-"), this.getStringTags(tags));
+				},
+				removeTag: function() {
+					var tags = this.state.tags.slice(0, this.state.tags.length - 1);
+					this.setState({tags: tags});
+					this.getResults(this.state.location.replace(/[\/%]/g,"").replace(", ", ",").replace(/-/g, "%21").replace(/ /g, "-"), this.getStringTags(tags));
+				},
+				removeSpecificTag: function(i) {
+					var tags = this.state.tags.slice(0, i).concat(this.state.tags.slice(i + 1, this.state.tags.length));
+					this.setState({tags: tags});
+					this.getResults(this.state.location.replace(/[\/%]/g,"").replace(", ", ",").replace(/-/g, "%21").replace(/ /g, "-"), this.getStringTags(tags));
+				},
+				getStringTags: function(tagsArr) {
+					var tags = "";
+					if(tagsArr.length > 0) {
+						tags = tagsArr[0];
+						for(var i = 1; i < tagsArr.length; i++) {
+							tags += "-" + tagsArr[i];
+						}
+					}
+					return tags;
+				},
+				getArrayTags: function(tagsString) {
+					var tags = [];
+					var split = tagsString.split("-");
+					for(var i in split) {
+						if(split[i] != '') {
+							tags.push(split[i]);
+						}
+					}
+					return tags;
+				},
+				getResults: function(location, tags) {
+					$.ajax({
+						url: JSONSEARCHURL + location + "/" + tags,
+						dataType: 'json',
+						type: 'GET',
+						success: function(data) {
+							this.setState({results: data});
+						}.bind(this),
+						error: function(xhr, status, err) {
+							console.error(JSONSEARCHURL, status, err.toString());
+						}.bind(this)
+					});
+				},
+				render: function() {
+					return (
+						<div>
+							<TripTailorNavBar />
+							<SearchHeader location={this.state.location} query={this.state.query} tags={this.state.tags} updateLocationValue={this.updateLocationValue} updateQueryValue={this.updateQueryValue} addTag={this.addTag} removeTag={this.removeTag} removeSpecificTag={this.removeSpecificTag}/>
+							<Content results={this.state.results} displayedResults={this.state.displayedResults} displayMoreResults={this.displayMoreResults} />
+							<TripTailorFooter />
+						</div>
+					);
+				}
+			});
+
+			var AutoCompleteSearch = React.createClass({
+				render: function() {
+					return (
+						<div className="row no-horizontal-margins">
+							<div className="col-md-4 form-col-left">
+								<p className="header-label" ><strong>Location</strong></p>
+								<TripTailorAutoCompleteInput url={AUTOCOMPLETECITYURL} value={this.props.location} updateValue={this.props.updateLocationValue} submit={this.props.enterSubmit} />
+							</div>
+							<div className="col-md-8 form-col-center">
+								<p className="header-label" ><strong>Tags</strong></p>
+								<TripTailorAutoCompleteTags url={AUTOCOMPLETEQUERYURL} value={this.props.query} updateValue={this.props.updateQueryValue} submit={this.props.enterSubmit} tags={this.props.tags} addTag={this.props.addTag} removeTag={this.props.removeTag} removeSpecificTag={this.props.removeSpecificTag} />
+							</div>
+						</div>
+					);
+				}
+			});
+
+			var AlsoTry = React.createClass({
+				render: function() {
+					return (
+						<div className="row also">
+							<div className="col-md-10">
+								<p className="header-label"><strong>Also Try</strong></p>
+							</div>
+							<div className="col-md-2 submit-col">
+								<a ref="submit" className="submit" href="" onClick={this.submit}>Search</a>
+							</div>
+						</div>
+					);
+				}
+			});
+
+			var Content = React.createClass({
+				render: function() {
+					return (
+						<div className="container-fluid content">
+							{this.props.results.length > this.props.displayedResults ? <NumberResults results={this.props.results.length} /> : ''}
+							<ResultsGrid {...this.props} />
+							{this.props.results.length > this.props.displayedResults ? <button onClick={this.props.displayMoreResults}>Show more results</button> : ''}
+						</div>
+					);
+				}
+			});
+
+			var NumberResults = React.createClass({
+				render: function() {
+					return (
+						<p className="results-number">Matching results <strong>{this.props.results}</strong></p>
+					);
+				}
+			});
+
+			var ResultsGrid = React.createClass({
+				render: function() {
+					var rows = [];
+					var results = [];
+					for(var i = 0; i < this.props.results.length && i < this.props.displayedResults; i++) {
+						results.push(<Result result={this.props.results[i]} />);
+						if((i + 1) % 4 == 0) {
+							rows.push(
+								<div className="row">
+									{results}
+								</div>
+							);
+							results = [];
+						}
+					};
+					if(results.length > 0) {
+						rows.push(
+							<div className="row">
+								{results}
+							</div>
+						);
+					}
+					return (
+						<div>
+							{rows}
+						</div>
+					);
+				}
+			});
+
+			var Result = React.createClass({
+				render: function() {
+					return (
+						<div className="col-md-3" target="_blank">
+							<div className="result">
+								<a href={this.props.result.url} target="_blank" className="result-a">
+									<div className="result-name"><strong>{this.props.result.name}</strong></div>
+									<div className="result-price">{this.props.result.price} USD</div>
+									<TagsRow tags={this.props.result.tags} />
+								</a>
+							</div>
+						</div>
+					);
+				}
+			});
+
+			var TagsRow = React.createClass({
+				render: function() {
+					var tags = $.map(this.props.tags, function(value, i) {
+						return (
+							<Tag name={value.name} type={value.type} />
+						);
+					});
+
+					return (
+						<div className="result-tags">
+							{tags}
+						</div>
+					);
+				}
+			});
+
+			var Tag = React.createClass({
+				render: function() {
+					return (
+						<div className={this.props.type == 0 ? "tag tag-selected" : "tag tag-unselected"}><strong>{this.props.name}</strong></div>
+					);
+				}
+			});
+
+			React.render(<Hostels />, document.body);
+
+    </script>
+
+    <script src="https://fb.me/react-0.13.3.js"></script>
+    <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/helper.js"></script>
+	</body>
+</html>

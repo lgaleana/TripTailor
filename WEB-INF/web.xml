@@ -25,6 +25,7 @@
       <servlet-name>HostelsController</servlet-name>
       <url-pattern>/hostels/search/*</url-pattern>
       <url-pattern>/hostels/hints/*</url-pattern>
+      <url-pattern>/hostels/search-json/*</url-pattern>
    </servlet-mapping>
    
    <servlet-mapping>

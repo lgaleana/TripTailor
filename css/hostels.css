@@ -1,95 +1,75 @@
-html, body {
-	height: 100%;
-}
 body {
-	background: url(../img/van.jpg) no-repeat center center fixed;                                                
-	background-size: cover; 
+  color: black;
 }
-h4 {
+
+.navbar-triptailor {
+	background-color: #183152;
+	border-radius: 0;
+	margin-bottom: 15px;
+}
+
+.header-row {
+	border-bottom: 1px solid #DEDEDE;
+	padding: 15px 0;
+}
+.first-header {
+	padding-bottom: 15px;
+}
+.col-label {
+	display: table;
+	height: 34px;
+}
+label {
+	display: table-cell;
+	vertical-align: middle;
+	margin-bottom: 0;
+	font-weight: normal;
+}
+.form-control {
+	border: 1px solid black !important;
+	border-radius: 0;
+}
+.submit {
+	background-color: #ff9933;
+	padding: 6px 12px;
+	border: 1px solid #ff9933;
 	color: white;
-	text-shadow: 0 0 2px #333;
-}
-#logo {
-	text-align: center;	
-}
-#topbar {
-	width: 100%;
-	height: 60px;
-	top: 0;
-}
-#container {
-	text-align: center;
-	padding: 0 5%;
-	margin-top: 8%;
-}
-#search {
-	background-color: rgba(24, 49, 82, 0.9);
-	padding: 3% 6%;
 	border-radius: 4px;
-	margin-top: 3%;
-	box-shadow: 0 0 2px #333;
-}
-#city {
-	margin-top: 3%;
-}
-input[type=text] {
-	display: block;
+
+	display: inline-block;
+	vertical-align: middle;
 	width: 100%;
-	margin: 0 -13px;
-	height: 40px;
+	text-align: center;
 }
-a {
-	padding: 12px;
-	margin-top: 3%;
+.submit:hover {
 	text-decoration: none;
+	color: white;
 }
 
-.autocomplete {
-	position: absolute;
-	top: 0;
-	width: calc(100% + 27px);
-	background-color: white;
-	margin-left: -13px;
-	display: none;
-	text-align: left;
-	font-family: Arial;
-	padding-top: 4px;
-	max-height: 200px;
-	overflow-y: auto;
+.col-also {
+	height: 31px;
+	display: table;
 }
-.autocomplete p {
-	margin: 0;
-	font-size: 16px;
-	padding: 8px 20px;
+.also-label {
+	display: table-cell;
+	vertical-align: middle;
 }
-#hostels {
-	margin-bottom: 10px;
+.tag {
+	display: inline-block;
+	border: 1px solid #B8B8B8;
+	background-color: #DEDEDE;
+	padding: 5px 10px;
+	margin-bottom: 5px;
 }
-.title {
-	color: #183152;
-	font-weight: bold;
+.results-number-col {
+	display: table;
+	height: 55px;
 }
-.autocomplete-element {
-	cursor: pointer;
-	background-color: white;
+.results-number-container {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
 }
-.autocomplete-element:hover {
-	background-color: #C4D7ED;
-}
-
-.addthis_sharing_toolbox {
-	margin-top: 10%;
-}
-
-@media (min-width: 700px) {
-	.autocomplete {
-		max-height: 300px;
-	}
-	#logo {
-		text-align: left;
-		margin-left: 7%;
-	}
-	#container {
-		padding: 0 25%;
-	}
+.results-number-container p {
+	margin-bottom: 0;
 }

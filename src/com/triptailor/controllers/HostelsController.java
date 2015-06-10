@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.triptailor.classifier.HostelClassifier;
+import com.triptailor.classifier.HostelClassifier.TagHolder;
 import com.triptailor.database.HostelsDatabase;
 import com.triptailor.database.LocationsDatabase;
 import com.triptailor.database.SearchesDatabase;
@@ -38,6 +40,7 @@ public class HostelsController extends HttpServlet {
 	private String hintsWord = "hints";
 	private String hintsClassHostelWord = "hostels";
 	private String hintsClassLocationWord = "locations";
+	private String jsonSearchWord = "search-json";
 	
 	private String adWordsParameter = "gclid";
 	private String adWordsParameter2 = "ad";
@@ -70,11 +73,16 @@ public class HostelsController extends HttpServlet {
 		if(uris.length == totalUris) {
 			if(uris[hintsWordUri].equals(hintsWord))
 				returnHints(response, uris);
+			else if(uris[hintsWordUri].equals(jsonSearchWord))
+				classifyJson(request, response, uris);
 			else
 				classify(request, response, uris);
 		}
 		else if(uris.length == totalUris - 1) {
-			displayAll(request, response, uris);
+			if(uris[hintsWordUri].equals(jsonSearchWord))
+				classifyJson(request, response, uris);
+			else
+				displayAll(request, response, uris);
 		}
 		else {
 			response.sendRedirect(redirectUrl);
@@ -130,6 +138,7 @@ public class HostelsController extends HttpServlet {
 			hostelsDatabase.close();
 		}
 		
+		response.setContentType("text/html");
 		request.setAttribute("results", results);
 		request.setAttribute("location", location);
 		request.setAttribute("searchId", searchId);
@@ -227,4 +236,78 @@ public class HostelsController extends HttpServlet {
 		PrintWriter out = response.getWriter();
 	    out.println("<h1>" + request.getParameter(adWordsParameter) + "</h1>");*/
 	}
+	
+	// Classifier
+		private void classifyJson(HttpServletRequest request, HttpServletResponse response, String[] uris) throws ServletException, IOException {
+			List<Hostel> results = new ArrayList<Hostel>();
+			int searchId = -1;
+			
+			String[] locations = uris[cityUri].replace("-", " ").replace("%21", "-").split(",");
+			String city = locations[0].replaceAll("[^a-zA-Z -]", "");
+			
+			LocationsDatabase locationsDatabase = new LocationsDatabase();
+			Location location = locationsDatabase.loadLocation(city, stop);
+			locationsDatabase.close();
+			
+			List<String> possibleTags = new ArrayList<String>();
+			
+			if(location != null) {
+				HostelsDatabase hostelsDatabase = new HostelsDatabase();
+				
+				List<Hostel> model =  hostelsDatabase.loadModel(location.getCity(), location.getCountry());
+				
+				if(model.size() > 0) {
+					String parameters = "";
+					if(uris.length > 5)
+						parameters = uris[parametersUri].replace("-", " ").replace("%21", "-");
+					
+					int adwords = (request.getParameter(adWordsParameter) == null &&  request.getParameter(adWordsParameter2) == null) ? 0 : 1;
+					
+					SearchesDatabase searchesDatabase = new SearchesDatabase();
+					
+					HostelClassifier classifier = new HostelClassifier();
+					
+					possibleTags = Arrays.asList(parameters.split("[ ,]"));
+					results = classifier.classifyByTags(model, possibleTags, stop);
+						
+					searchId = searchesDatabase.saveTagsSearch(request.getSession().getId(), possibleTags, city, adwords);
+					searchesDatabase.close();
+				}
+				hostelsDatabase.close();
+			}
+			
+			/* response.setContentType("text/html");
+			request.setAttribute("results", results);
+			request.setAttribute("location", location);
+			request.setAttribute("searchId", searchId);
+			request.getRequestDispatcher("/WEB-INF/hostels.jsp").forward(request, response); */
+			
+			response.setContentType("application/json");
+			PrintWriter out = response.getWriter();
+			
+			String json = "[";
+			for(Hostel hostel : results) {
+				json += "{\"name\":\"" + hostel.getName() + "\",";
+				json += "\"price\":" + hostel.getPrice() + ",";
+				json += "\"url\":\"" + hostel.getUrl() + "\",";
+				json += "\"tags\":[";
+				PriorityQueue<TagHolder> tags = hostel.getTags();
+				int i = 0;
+				while(!tags.isEmpty() && i < 6) {
+					TagHolder tag = tags.poll();
+					json += "{\"name\":\"" + tag.name + "\",";
+					json += "\"type\":" + tag.type + "},";
+					i++;
+				}
+				if(i > 0)
+					json = json.substring(0, json.length() - 1);
+				json += "]},";
+			}
+			if(!results.isEmpty())
+				json = json.substring(0, json.length() - 1);
+			json += "]";
+			
+		    out.print(json);
+		    out.flush();
+		}
 }
