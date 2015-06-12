@@ -12,7 +12,6 @@ body {
 	text-align: center;
 	padding-left: 0;
 	padding-right: 0;
-	margin-top: 10px;
 }
 .inline-input-left, .input-tags {
 	border-radius: 4px;
@@ -26,8 +25,8 @@ body {
 
 /*** Header ***/
 .jumbotron {
-	padding-top: 15px;
-	padding-bottom: 127px;
+	padding-top: 0px;
+	padding-bottom: 114px;
 	margin-bottom: 0;
 
 	background: url(../img/sf.jpg) no-repeat center center;
@@ -43,39 +42,45 @@ body {
 	margin-left: 0;
 	margin-right: 0;
 }
-.header {
-	font-family: 'Ubuntu', sans-serif;
-	font-size: 36px;
-	font-weight: normal;
-	text-shadow: black 0.1em 0.1em 0.2em;
-	color: white;
-	margin-top: 49px;
+.navbar-brand {
+	text-shadow: rgba(0, 0, 0, 0.5) 0 2px 4px;
 }
-.subheader {
-	font-size: 18px;
-	text-shadow: black 0.1em 0.1em 0.2em;
+.nav .navbar-nav {
+	margin-top: 10px;
+}
+.navbar-triptailor .navbar-nav>li>a {
+	text-shadow: rgba(0, 0, 0, 0.5) 0 2px 4px;
+}
+.jumbotron .header {
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 38px;
+	text-shadow: rgba(0, 0, 0, 0.5) 0 2px 4px;
 	color: white;
-
-	margin-bottom: 49px;
+	margin-top: 80px;
+	margin-bottom: 8px;
+}
+.jumbotron .subheader {
+	font-size: 18px;
+	text-shadow: rgba(0, 0, 0, 0.5) 0 2px 4px;
+	color: white;
+	margin-bottom: 52px;
 }
 
 /*** Tips ***/
 
 .tips-header-container {
-	padding-top: 37px;
-	padding-bottom: 36px;
+	padding-top: 40px;
+	padding-bottom: 32px;
 }
 .tips-header {
 	font-family: 'Ubuntu', sans-serif;
 	font-size: 30px;
-	font-weight: normal;
 	color: #000;
-	
 	margin-top: 0;
+	margin-bottom: 8px;
 }
 .tips-subheader {
 	color: #000;
-
 	margin-bottom: 0;
 }
 .tip-a {
@@ -85,9 +90,7 @@ body {
 	color: inherit;
 }
 .tip-big {
-	background-color: #A1A1A1;
 	height: 300px;
-
 	background: url(../img/istanbul.jpg) no-repeat center center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -133,37 +136,31 @@ body {
 .tip-content {
 	vertical-align: middle;
 	display: table-cell;
-	text-shadow: black 0.1em 0.1em 0.2em;
+	text-shadow: rgba(0, 0, 0, 0.5) 0 2px 4px;
 }
 .tip-content h3 {
 	margin-top: 0;
 	font-family: 'Ubuntu', sans-serif;
 	font-size: 24px;
-	font-weight: normal;
 }
 .tip-content p {
 	color: inherit;
 }
 .tip-results {
 	display: inline-block;
-	font-size: 12px;
 	background-color: #ff5a5f;
 	padding: 10px 8px;
-	border-radius: 2px;
+	border-radius: 3px;
 	color: inherit;
 }
 .bottom-tips {
 	margin-top: 30px;
-	margin-bottom: 80px;
+	margin-bottom: 100px;
 }
 
 /*** Media queries ***/
 
 @media (min-width: 992px) {
-	.a-col {
-		margin-top: 0;
-	}
-
 	.form-col-left {
 		border-right: 1px solid #ccc;
 	}

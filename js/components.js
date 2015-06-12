@@ -156,7 +156,7 @@ var TripTailorAutoCompleteResults = React.createClass({
 	render: function() {
 		var rows = $.map(this.props.hints, function(value, i) {
 			return(
-				<TripTailorAutoCompleteRow value={value} index={i} selectedItem={this.props.selectedItem} elementClick={this.props.elementClick} elementHover={this.props.elementHover} scrollToThis={this.scrollToRow} />
+				<TripTailorAutoCompleteRow value={value} key={i} index={i} selectedItem={this.props.selectedItem} elementClick={this.props.elementClick} elementHover={this.props.elementHover} scrollToThis={this.scrollToRow} />
 			);
 		}.bind(this));
 
@@ -196,8 +196,11 @@ var TripTailorAutoCompleteTags = React.createClass({
 		this.setState({hints: [], selectedItem: -1});
 	},
 	handleKeyUp: function(e) {
-		if(e.keyCode == 27)
+		if(e.keyCode == 27) {
+			this.props.addTag(React.findDOMNode(this.refs.query).value);
+			this.props.updateValue("");
 			this.setState({hints: [], selectedItem: -1});
+		}
 		else if(e.keyCode == 13) {
 			if(this.state.selectedItem >= 0) {
 				this.props.addTag(this.state.hints[this.state.selectedItem]);
@@ -214,9 +217,11 @@ var TripTailorAutoCompleteTags = React.createClass({
 	},
 	handleKeyDown: function(e) {
 		if(e.keyCode == 40 && this.state.selectedItem < this.state.hints.length - 1) {
+			e.preventDefault();
 			this.setState({selectedItem: this.state.selectedItem + 1});
 		}
 		else if(e.keyCode == 38 && this.state.selectedItem > 0) {
+			e.preventDefault();
 			this.setState({selectedItem: this.state.selectedItem - 1});
 		}
 		else if(e.keyCode == 9 && this.state.selectedItem >= 0) {
@@ -232,7 +237,7 @@ var TripTailorAutoCompleteTags = React.createClass({
 	render: function() {
 		var tags = $.map(this.props.tags, function(value, i) {
 			return (
-				<TripTailorInputTag index={i} value={value} removeSpecificTag={this.props.removeSpecificTag} />
+				<TripTailorInputTag key={i} index={i} value={value} removeSpecificTag={this.props.removeSpecificTag} />
 			);
 		}.bind(this));
 
